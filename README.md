@@ -1,5 +1,5 @@
 # GetCurrency
-List all currencies available in NSLocale programmatically
+List all currencies available in NSLocale programmatically using swift 2
 
 ![](https://github.com/gazolla/GetCurrency/raw/master/ScreenShot.png)
 
