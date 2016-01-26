@@ -10,34 +10,59 @@ import UIKit
 
 class CurrencyController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UISearchResultsUpdating {
     
-    let searchController = UISearchController(searchResultsController: nil)
+    // PRAGMA MARK: - Properties
+    lazy var searchController:UISearchController = {
+        let search = UISearchController(searchResultsController: nil)
+        search.searchResultsUpdater = self
+        search.searchBar.delegate = self
+        search.dimsBackgroundDuringPresentation = false
+        search.hidesNavigationBarDuringPresentation = false
+        search.searchBar.alpha = 0
+        self.definesPresentationContext = true
+        search.searchBar.sizeToFit()
+        return search
+    }()
+
+    lazy var tableView:UITableView = {
+        let tv = UITableView(frame: self.view.bounds, style: UITableViewStyle.Plain)
+        tv.autoresizingMask = [UIViewAutoresizing.FlexibleHeight, UIViewAutoresizing.FlexibleWidth]
+        tv.dataSource = self
+        tv.delegate = self
+        tv.registerClass(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        return tv
+    }()
     
     var currencies:[Currency] = Currency().loadEveryCountryWithCurrency()
     var filteredCountries:[Currency] = []
-    var tableView:UITableView?
-    
     var leftButton:  UIBarButtonItem?
     var searchButton: UIBarButtonItem?
 
-    
+    // PRAGMA MARK: - UIViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.setupNavBar()
-        self.setupTableView()
-
-        self.searchController.searchResultsUpdater = self
-        self.searchController.searchBar.delegate = self
-        self.searchController.dimsBackgroundDuringPresentation = false
-        definesPresentationContext = true
-        self.searchController.searchBar.sizeToFit()
-        
-
-        self.tableView!.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: UITableViewScrollPosition.Top, animated: false)
+        self.setup()
     }
     
-    // MARK: - UISearchBarDelegate
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
 
+    // PRAGMA MARK: - Setup Method
+    func setup(){
+        self.title = "Select one currency:"
+        
+        self.leftButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: "dismissTapped:")
+        self.searchButton = UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: "searchCurrency:")
+        self.navigationItem.leftBarButtonItem = self.leftButton
+        self.navigationItem.rightBarButtonItem = self.searchButton
+        
+        self.view.addSubview(self.tableView)
+    }
+
+    
+    // PRAGMA MARK: - UISearchBarDelegate
     func filterContentForSearchText(searchText: String, scope: String = "All") {
         self.filteredCountries = currencies.filter{ currency in
             
@@ -52,8 +77,9 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
                 return false
             }
          }
-        self.tableView?.reloadData()
+        self.tableView.reloadData()
     }
+    
     
     func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: "")
@@ -65,63 +91,40 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     
     func dismissSearchBar(){
         UIView.animateWithDuration(0.3, animations: { () -> Void in
-            self.searchController.searchBar.alpha = 0
-           // self.searchController.view.removeFromSuperview()
-            self.tableView!.tableHeaderView = nil
+             self.searchController.searchBar.alpha = 0
             }) { (Bool) -> Void in
-                
+                self.title = "Select one currency:"
                 self.navigationItem.rightBarButtonItem = self.searchButton
         }
     }
 
 
-    // MARK: - UISearchResultsUpdating Delegate
+    //PRAGMA MARK: - UISearchResultsUpdating Delegate
     func updateSearchResultsForSearchController(searchController: UISearchController) {
          filterContentForSearchText(searchController.searchBar.text!, scope: "")
     }
-    
-    
-    func setupNavBar(){
-        self.title = "Select one currency:"
-        
-        self.leftButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: "dismissTapped:")
-         self.searchButton = UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: "searchCurrency:")
-        self.navigationItem.leftBarButtonItem = self.leftButton
-        self.navigationItem.rightBarButtonItem = self.searchButton
-    }
-    
-    func searchCurrency(sender:UIButton){
-        self.searchController.searchBar.alpha = 1
-        self.searchController.searchBar.becomeFirstResponder()
 
+    //PRAGMA MARK: - search event Method
+    func searchCurrency(sender:UIButton){
         UIView.animateWithDuration(0.3, animations: { () -> Void in
-            self.tableView!.tableHeaderView = self.searchController.searchBar
-            self.tableView!.setContentOffset(CGPointMake(0, -64), animated: false)
+            self.navigationItem.rightBarButtonItem = nil
+            self.navigationItem.titleView = self.searchController.searchBar
+            self.searchController.searchBar.alpha = 1
+            self.searchController.searchBar.becomeFirstResponder()
             self.searchController.searchBar.text = ""
         })
-        
     }
     
     func dismissTapped(sender:UIButton){
         self.dismissViewControllerAnimated(true) {}
     }
     
-    
-    func setupTableView(){
-        self.tableView = UITableView(frame: self.view.bounds, style: UITableViewStyle.Plain)
-        self.tableView!.autoresizingMask = [UIViewAutoresizing.FlexibleHeight, UIViewAutoresizing.FlexibleWidth]
-        self.tableView!.dataSource = self
-        self.tableView!.delegate = self
-        self.tableView!.registerClass(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
-        self.view.addSubview(self.tableView!)
-    }
-    
+    //PRAGMA MARK: - TableVIew Method
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchController.active && searchController.searchBar.text != "" {
             return self.filteredCountries.count
         }
         return self.currencies.count
-
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -159,15 +162,8 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
         self.dismissSearchBar()
-
         NSNotificationCenter.defaultCenter().postNotificationName("selectedCurrency", object: currency)
-        
         self.dismissViewControllerAnimated(true) {}
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
 
