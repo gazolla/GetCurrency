@@ -33,7 +33,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     }()
     
     var currencies:[Currency] = Currency().loadEveryCountryWithCurrency()
-    var filteredCountries:[Currency] = []
+    var filteredCurrencies:[Currency] = []
     var leftButton:  UIBarButtonItem?
     var searchButton: UIBarButtonItem?
 
@@ -64,19 +64,10 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     
     // PRAGMA MARK: - UISearchBarDelegate
     func filterContentForSearchText(searchText: String, scope: String = "All") {
-        self.filteredCountries = currencies.filter{ currency in
-            
-            let result = currency.currencyName!.lowercaseString.rangeOfString(searchText.lowercaseString ,
-                options: NSStringCompareOptions.LiteralSearch,
-                range: currency.currencyName!.startIndex..<currency.currencyName!.endIndex,
-                locale: nil)
-            
-             if let _ = result {
-                return true
-             } else {
-                return false
-            }
-         }
+        self.filteredCurrencies = currencies.filter{ currency in
+            let stringMatch = currency.currencyName!.lowercaseString.rangeOfString(searchText.lowercaseString)
+            return (stringMatch != nil)
+        }
         self.tableView.reloadData()
     }
     
@@ -122,7 +113,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     //PRAGMA MARK: - TableVIew Method
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchController.active && searchController.searchBar.text != "" {
-            return self.filteredCountries.count
+            return self.filteredCurrencies.count
         }
         return self.currencies.count
     }
@@ -133,7 +124,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
         let currency:Currency
         
         if searchController.active && searchController.searchBar.text != "" {
-            currency = self.filteredCountries[indexPath.row]
+            currency = self.filteredCurrencies[indexPath.row]
         } else {
             currency = self.currencies[indexPath.row]
         }
@@ -155,7 +146,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
         let currency:Currency
         
         if searchController.active && searchController.searchBar.text != "" {
-            currency = self.filteredCountries[indexPath.row]
+            currency = self.filteredCurrencies[indexPath.row]
             searchController.active = false
         } else {
             currency = self.currencies[indexPath.row]
