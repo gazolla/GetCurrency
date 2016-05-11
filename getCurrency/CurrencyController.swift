@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CurrencyController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, UISearchResultsUpdating {
+class CurrencyController: UIViewController{
     
     // PRAGMA MARK: - Properties
     lazy var searchController:UISearchController = {
@@ -32,38 +32,37 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
         return tv
     }()
     
+    lazy  var leftButton:  UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: #selector(CurrencyController.dismissTapped(_:)))
+    }()
+
+    lazy var searchButton: UIBarButtonItem = {
+        return UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: #selector(CurrencyController.searchCurrency(_:)))
+    }()
+    
     var currencies:[Currency] = Currency().loadEveryCountryWithCurrency()
     var filteredCurrencies:[Currency] = []
-    var leftButton:  UIBarButtonItem?
-    var searchButton: UIBarButtonItem?
+    
 
     // PRAGMA MARK: - UIViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setup()
+        self.title = "Select one currency:"
+        self.navigationItem.leftBarButtonItem = self.leftButton
+        self.navigationItem.rightBarButtonItem = self.searchButton
+        self.view.addSubview(self.tableView)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+}
 
-    // PRAGMA MARK: - Setup Method
-    func setup(){
-        self.title = "Select one currency:"
-        
-        self.leftButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: "dismissTapped:")
-        self.searchButton = UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: "searchCurrency:")
-        self.navigationItem.leftBarButtonItem = self.leftButton
-        self.navigationItem.rightBarButtonItem = self.searchButton
-        
-        self.view.addSubview(self.tableView)
-    }
 
-    
+extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
     // PRAGMA MARK: - UISearchBarDelegate
-    func filterContentForSearchText(searchText: String, scope: String = "All") {
+    func filterContentForSearchText(searchText: String) {
         self.filteredCurrencies = currencies.filter{ currency in
             let stringMatch = currency.currencyName!.lowercaseString.rangeOfString(searchText.lowercaseString)
             return (stringMatch != nil)
@@ -73,7 +72,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        filterContentForSearchText(searchBar.text!, scope: "")
+        filterContentForSearchText(searchBar.text!)
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -92,7 +91,7 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
 
     //PRAGMA MARK: - UISearchResultsUpdating Delegate
     func updateSearchResultsForSearchController(searchController: UISearchController) {
-         filterContentForSearchText(searchController.searchBar.text!, scope: "")
+         filterContentForSearchText(searchController.searchBar.text!)
     }
 
     //PRAGMA MARK: - search event Method
@@ -109,8 +108,10 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
     func dismissTapped(sender:UIButton){
         self.dismissViewControllerAnimated(true) {}
     }
-    
-    //PRAGMA MARK: - TableVIew Method
+}
+
+//PRAGMA MARK: - TableView Methods
+extension CurrencyController:UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchController.active && searchController.searchBar.text != "" {
             return self.filteredCurrencies.count
@@ -129,9 +130,9 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
             currency = self.currencies[indexPath.row]
         }
         
-        let imgPath = NSBundle.mainBundle().pathForResource(currency.countryCode!, ofType: "png")
-        
-        if imgPath != nil {cell!.imageView?.image = UIImage(named: imgPath!)}
+        if let imgPath = NSBundle.mainBundle().pathForResource(currency.countryCode!, ofType: "png"){
+            cell!.imageView?.image = UIImage(named: imgPath)
+        }
         let curString = NSMutableAttributedString(string: "\(currency.currencyCode!) - \(currency.currencyName!)", attributes: [NSForegroundColorAttributeName: UIColor.grayColor()])
         curString.addAttribute(NSForegroundColorAttributeName, value: UIColor.blackColor(), range: NSRange(location:0,length:4))
         
@@ -156,6 +157,5 @@ class CurrencyController: UIViewController, UITableViewDelegate, UITableViewData
         NSNotificationCenter.defaultCenter().postNotificationName("selectedCurrency", object: currency)
         self.dismissViewControllerAnimated(true) {}
     }
-    
-
+  
 }

@@ -15,10 +15,6 @@
 		082F5F341C401154002C71CA /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082F5F331C401154002C71CA /* MainViewController.swift */; };
 		082F5F361C40117F002C71CA /* CurrencyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082F5F351C40117F002C71CA /* CurrencyController.swift */; };
 		082F5F381C403A28002C71CA /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082F5F371C403A28002C71CA /* Currency.swift */; };
-		08A580771C41905700AB96EC /* CountDownController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A580721C41905700AB96EC /* CountDownController.swift */; };
-		08A580781C41905700AB96EC /* PopUpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A580731C41905700AB96EC /* PopUpController.swift */; };
-		08A580791C41905700AB96EC /* SCLAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A580741C41905700AB96EC /* SCLAlertView.swift */; };
-		08A5807A1C41905700AB96EC /* Sound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A580751C41905700AB96EC /* Sound.swift */; };
 		08A5807B1C41905700AB96EC /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A580761C41905700AB96EC /* UIKitExtensions.swift */; };
 		08A5817B1C41946700AB96EC /* AC.png in Resources */ = {isa = PBXBuildFile; fileRef = 08A5807D1C41946600AB96EC /* AC.png */; };
 		08A5817C1C41946700AB96EC /* AD.png in Resources */ = {isa = PBXBuildFile; fileRef = 08A5807E1C41946600AB96EC /* AD.png */; };
@@ -310,10 +306,6 @@
 		082F5F331C401154002C71CA /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		082F5F351C40117F002C71CA /* CurrencyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyController.swift; sourceTree = "<group>"; };
 		082F5F371C403A28002C71CA /* Currency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
-		08A580721C41905700AB96EC /* CountDownController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountDownController.swift; sourceTree = "<group>"; };
-		08A580731C41905700AB96EC /* PopUpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpController.swift; sourceTree = "<group>"; };
-		08A580741C41905700AB96EC /* SCLAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SCLAlertView.swift; sourceTree = "<group>"; };
-		08A580751C41905700AB96EC /* Sound.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sound.swift; sourceTree = "<group>"; };
 		08A580761C41905700AB96EC /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
 		08A5807D1C41946600AB96EC /* AC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AC.png; sourceTree = "<group>"; };
 		08A5807E1C41946600AB96EC /* AD.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AD.png; sourceTree = "<group>"; };
@@ -655,10 +647,6 @@
 		08A580711C41905700AB96EC /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				08A580721C41905700AB96EC /* CountDownController.swift */,
-				08A580731C41905700AB96EC /* PopUpController.swift */,
-				08A580741C41905700AB96EC /* SCLAlertView.swift */,
-				08A580751C41905700AB96EC /* Sound.swift */,
 				08A580761C41905700AB96EC /* UIKitExtensions.swift */,
 				08A5827B1C4197E600AB96EC /* CustomTableViewCell.swift */,
 			);
@@ -1317,11 +1305,7 @@
 				08A5807B1C41905700AB96EC /* UIKitExtensions.swift in Sources */,
 				082F5F341C401154002C71CA /* MainViewController.swift in Sources */,
 				082F5F361C40117F002C71CA /* CurrencyController.swift in Sources */,
-				08A580781C41905700AB96EC /* PopUpController.swift in Sources */,
 				08A5827C1C4197E600AB96EC /* CustomTableViewCell.swift in Sources */,
-				08A580791C41905700AB96EC /* SCLAlertView.swift in Sources */,
-				08A580771C41905700AB96EC /* CountDownController.swift in Sources */,
-				08A5807A1C41905700AB96EC /* Sound.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -187,7 +187,7 @@ extension UIView {
 
 extension UIButton {
     
-    static func makeButton(title:String, tag:Int, hasBackground:Bool, target:AnyObject?) -> UIButton{
+    static func makeButton(title:String, tag:Int, hasBackground:Bool, target:AnyObject?, action:Selector) -> UIButton{
         let blue =  UIColor(red: 0.133, green: 0.376, blue: 0.533, alpha: 1.000)
         let b = UIButton()
         b.tag = tag
@@ -200,17 +200,17 @@ extension UIButton {
         }
         b.setTitle(title, forState: UIControlState.Normal)
         b.titleLabel!.font =  UIFont(name: "AmericanTypewriter-Bold" , size: 20)
-        b.addTarget(target, action: "btnTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        b.addTarget(target, action: action, forControlEvents: UIControlEvents.TouchUpInside)
         return b
     }
     
-    static func makeImageButton(imageName:String, tag:Int, hasBackground:Bool, target:AnyObject?) -> UIButton{
+    static func makeImageButton(imageName:String, tag:Int, hasBackground:Bool, target:AnyObject?, action:Selector) -> UIButton{
         let b = UIButton()
         b.tag = tag
         b.translatesAutoresizingMaskIntoConstraints = false
         //b.backgroundColor = UIColor.clearColor()
         b.setBackgroundImage(UIImage(named: imageName), forState: UIControlState.Normal)
-        b.addTarget(target, action: "btnTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        b.addTarget(target, action: action, forControlEvents: UIControlEvents.TouchUpInside)
         return b
     }
     
@@ -222,51 +222,11 @@ extension UIButton {
             }) { (Bool) -> Void in
                 
                 UIView.animateWithDuration(NSTimeInterval(0.1), animations: { () -> Void in
-                    if sender.respondsToSelector("backgroundColor") {
+                    if sender.respondsToSelector(Selector("backgroundColor")) {
                         sender.backgroundColor = bgColor}
                     }, completion: { (Bool) -> Void in })
         }
         
     }
-}
-
-extension UIColor {
-    
-    class func monochromatic() -> [UIColor]{
-        let opemaBlue = UIColor(red: 0.133, green: 0.376, blue: 0.533, alpha: 1.000)
-        let monochromatic1 = UIColor(red: 0.111, green: 0.152, blue: 0.178, alpha: 1.000)
-        let monochromatic2 = UIColor(red: 0.067, green: 0.188, blue: 0.267, alpha: 1.000)
-        let monochromatic3 = UIColor(red: 0.267, green: 0.321, blue: 0.356, alpha: 1.000)
-        let monochromatic4 = UIColor(red: 0.107, green: 0.301, blue: 0.427, alpha: 1.000)
-        return [opemaBlue, monochromatic1, monochromatic2, monochromatic3, monochromatic4]
-    }
-    
-    class func complementary() -> [UIColor]{
-        let complementary0 = UIColor(red: 0.133, green: 0.376, blue: 0.533, alpha: 1.000)
-        let complementary1 = UIColor(red: 0.107, green: 0.301, blue: 0.427, alpha: 1.000)
-        let complementary2 = UIColor(red: 0.248, green: 0.421, blue: 0.533, alpha: 1.000)
-        let complementary3 = UIColor(red: 0.533, green: 0.290, blue: 0.133, alpha: 1.000)
-        let complementary4 = UIColor(red: 0.533, green: 0.360, blue: 0.248, alpha: 1.000)
-        return [complementary0, complementary1, complementary2, complementary3, complementary4]
-    }
-    
-    class func analagous() -> [UIColor]{
-        let analagous0 = UIColor(red: 0.133, green: 0.376, blue: 0.533, alpha: 1.000)
-        let analagous1 = UIColor(red: 0.130, green: 0.163, blue: 0.433, alpha: 1.000)
-        let analagous2 = UIColor(red: 0.145, green: 0.266, blue: 0.483, alpha: 1.000)
-        let analagous3 = UIColor(red: 0.145, green: 0.435, blue: 0.483, alpha: 1.000)
-        let analagous4 = UIColor(red: 0.130, green: 0.433, blue: 0.401, alpha: 1.000)
-        return [analagous0, analagous1, analagous2, analagous3, analagous4]
-    }
-    
-    class func triad() -> [UIColor]{
-        let triad0 = UIColor(red: 0.133, green: 0.376, blue: 0.533, alpha: 1.000)
-        let triad1 = UIColor(red: 0.483, green: 0.242, blue: 0.389, alpha: 1.000)
-        let triad2 = UIColor(red: 0.533, green: 0.133, blue: 0.376, alpha: 1.000)
-        let triad3 = UIColor(red: 0.376, green: 0.533, blue: 0.133, alpha: 1.000)
-        let triad4 = UIColor(red: 0.389, green: 0.483, blue: 0.242, alpha: 1.000)
-        return [triad0, triad1, triad2, triad3, triad4]
-    }
-    
 }
 

@@ -10,25 +10,33 @@ import UIKit
 
 class MainViewController: UIViewController {
 
-    var getCurrencyButton:UIButton?
-    var textView = UITextView()
+    lazy var getCurrencyButton:UIButton = {
+        return UIButton.makeButton("get currency", tag: 222, hasBackground: true, target: self,  action: #selector(MainViewController.btnTapped(_:)))
+    }()
+    
+    lazy var textView:UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
+    }()
+    
+    lazy var currencyCtrl:CurrencyController = {
+        return CurrencyController()
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "selectedCurrency:", name: "selectedCurrency", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.selectedCurrency(_:)), name: "selectedCurrency", object: nil)
+         
+        self.view.addSubview(self.getCurrencyButton)
+        self.view.addConstraints(getCurrencyButton.constrainToTopOfSuperView(200))
+        self.view.addConstraints(getCurrencyButton.centerHorizontallyTo(self.view))
+        self.view.addConstraints(getCurrencyButton.constrainWidth(200))
+        self.view.addConstraints(getCurrencyButton.constrainHeight(50))
         
-        self.getCurrencyButton = UIButton.makeButton("get currency", tag: 222, hasBackground: true, target: self)
-        self.view.addSubview(self.getCurrencyButton!)
-        self.view.addConstraints(getCurrencyButton!.constrainToTopOfSuperView(200))
-        self.view.addConstraints(getCurrencyButton!.centerHorizontallyTo(self.view))
-        self.view.addConstraints(getCurrencyButton!.constrainWidth(200))
-        self.view.addConstraints(getCurrencyButton!.constrainHeight(50))
         
-        textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(textView)
-        
         self.view.addConstraints(textView.constrainToBottomOfSuperView(100))
         self.view.addConstraints(textView.centerHorizontallyTo(self.view))
         self.view.addConstraints(textView.constrainWidth(self.view.bounds.width-20))
@@ -43,8 +51,7 @@ class MainViewController: UIViewController {
     }
     
     func btnTapped(sender:UIButton){
-        let currencyCtrl = CurrencyController()
-        let navCtrl = UINavigationController(rootViewController: currencyCtrl)
+        let navCtrl = UINavigationController(rootViewController: self.currencyCtrl)
         self.navigationController!.presentViewController(navCtrl, animated: true) {}
     }
 
