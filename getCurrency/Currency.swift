@@ -13,7 +13,6 @@ class Currency {
     var countryName:String?
     var countryCode:String?
     var currencyCode:String?
-    var currencySymbol:String?
     var currencyName:String?
     
     func loadEveryCountryWithCurrency() -> [Currency] {
@@ -42,6 +41,6 @@ class Currency {
 
 extension Currency:CustomStringConvertible {
     var description: String {
-        return "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\nSymbol       : \(self.currencySymbol)\ncurrencyName: \(self.currencyName!)\n----------------------------"
+        return "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\ncurrencyName: \(self.currencyName!)\n----------------------------"
     }
 }
