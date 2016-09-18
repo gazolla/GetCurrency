@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Currency: NSObject {
+class Currency {
     
     var countryName:String?
     var countryCode:String?
@@ -18,18 +18,18 @@ class Currency: NSObject {
     
     func loadEveryCountryWithCurrency() -> [Currency] {
         var result:[Currency]=[]
-        let currencies = NSLocale.commonISOCurrencyCodes()
+        let currencies = Locale.commonISOCurrencyCodes
         for currencyCode in currencies {
             
             let currency = Currency()
             currency.currencyCode = currencyCode
             
-            let currencyLocale : NSLocale  = NSLocale(localeIdentifier: currencyCode)
-            currency.currencyName = currencyLocale.displayNameForKey(NSLocaleCurrencyCode, value: currencyCode)
+            let currencyLocale = Locale(identifier: currencyCode)
+            currency.currencyName = (currencyLocale as NSLocale).displayName(forKey:NSLocale.Key.currencyCode, value: currencyCode)
             currency.countryCode = String(currencyCode.characters.prefix(2))
             
-            let countryLocale  = NSLocale.currentLocale()
-            currency.countryName = countryLocale.displayNameForKey(NSLocaleCountryCode, value: currency.countryCode!)
+            let countryLocale  = NSLocale.current
+            currency.countryName = (countryLocale as NSLocale).displayName(forKey: NSLocale.Key.countryCode, value: currency.countryCode!)
             
             if currency.countryName != nil {
                 result.append(currency)
@@ -38,10 +38,10 @@ class Currency: NSObject {
         }
         return result
     }
-    
-    
-    func print()->String{
-        return  "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\nSymbol       : \(self.currencySymbol)\ncurrencyName: \(self.currencyName!)\n----------------------------"
-    }
-    
  }
+
+extension Currency:CustomStringConvertible {
+    var description: String {
+        return "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\nSymbol       : \(self.currencySymbol)\ncurrencyName: \(self.currencyName!)\n----------------------------"
+    }
+}

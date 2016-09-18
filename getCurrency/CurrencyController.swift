@@ -24,20 +24,21 @@ class CurrencyController: UIViewController{
     }()
 
     lazy var tableView:UITableView = {
-        let tv = UITableView(frame: self.view.bounds, style: UITableViewStyle.Plain)
-        tv.autoresizingMask = [UIViewAutoresizing.FlexibleHeight, UIViewAutoresizing.FlexibleWidth]
+        let tv = UITableView(frame: self.view.bounds, style: .plain)
+        tv.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         tv.dataSource = self
         tv.delegate = self
-        tv.registerClass(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        tv.keyboardDismissMode = .onDrag
+        tv.register(CurrencyCell.self, forCellReuseIdentifier: "cell")
         return tv
     }()
     
     lazy  var leftButton:  UIBarButtonItem = {
-        return UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: #selector(CurrencyController.dismissTapped(_:)))
+        return UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(CurrencyController.dismissTapped(_:)))
     }()
 
     lazy var searchButton: UIBarButtonItem = {
-        return UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: #selector(CurrencyController.searchCurrency(_:)))
+        return UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(CurrencyController.searchCurrency(_:)))
     }()
     
     var currencies:[Currency] = Currency().loadEveryCountryWithCurrency()
@@ -52,35 +53,30 @@ class CurrencyController: UIViewController{
         self.navigationItem.rightBarButtonItem = self.searchButton
         self.view.addSubview(self.tableView)
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-}
+ }
 
 
 extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
     // PRAGMA MARK: - UISearchBarDelegate
-    func filterContentForSearchText(searchText: String) {
+    func filterContentForSearchText(_ searchText: String) {
         self.filteredCurrencies = currencies.filter{ currency in
-            let stringMatch = currency.currencyName!.lowercaseString.rangeOfString(searchText.lowercaseString)
+            let stringMatch = currency.currencyName!.lowercased().range(of: searchText.lowercased())
             return (stringMatch != nil)
         }
         self.tableView.reloadData()
     }
     
     
-    func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!)
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
          self.dismissSearchBar()
     }
     
     func dismissSearchBar(){
-        UIView.animateWithDuration(0.3, animations: { () -> Void in
+        UIView.animate(withDuration: 0.3, animations: { () -> Void in
              self.searchController.searchBar.alpha = 0
             }) { (Bool) -> Void in
                 self.title = "Select one currency:"
@@ -90,13 +86,13 @@ extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
 
 
     //PRAGMA MARK: - UISearchResultsUpdating Delegate
-    func updateSearchResultsForSearchController(searchController: UISearchController) {
+    func updateSearchResults(for searchController: UISearchController) {
          filterContentForSearchText(searchController.searchBar.text!)
     }
 
     //PRAGMA MARK: - search event Method
-    func searchCurrency(sender:UIButton){
-        UIView.animateWithDuration(0.3, animations: { () -> Void in
+    func searchCurrency(_ sender:UIButton){
+        UIView.animate(withDuration: 0.3, animations: { () -> Void in
             self.navigationItem.rightBarButtonItem = nil
             self.navigationItem.titleView = self.searchController.searchBar
             self.searchController.searchBar.alpha = 1
@@ -105,57 +101,48 @@ extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
         })
     }
     
-    func dismissTapped(sender:UIButton){
-        self.dismissViewControllerAnimated(true) {}
+    func dismissTapped(_ sender:UIButton){
+        self.dismiss(animated: true) {}
     }
 }
 
 //PRAGMA MARK: - TableView Methods
 extension CurrencyController:UITableViewDelegate, UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if searchController.active && searchController.searchBar.text != "" {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if searchController.isActive && searchController.searchBar.text != "" {
             return self.filteredCurrencies.count
         }
         return self.currencies.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell : CustomTableViewCell? = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as? CustomTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CurrencyCell
         
         let currency:Currency
-        
-        if searchController.active && searchController.searchBar.text != "" {
-            currency = self.filteredCurrencies[indexPath.row]
+        if searchController.isActive && searchController.searchBar.text != "" {
+            currency = self.filteredCurrencies[(indexPath as NSIndexPath).row]
         } else {
-            currency = self.currencies[indexPath.row]
+            currency = self.currencies[(indexPath as NSIndexPath).row]
         }
         
-        if let imgPath = NSBundle.mainBundle().pathForResource(currency.countryCode!, ofType: "png"){
-            cell!.imageView?.image = UIImage(named: imgPath)
-        }
-        let curString = NSMutableAttributedString(string: "\(currency.currencyCode!) - \(currency.currencyName!)", attributes: [NSForegroundColorAttributeName: UIColor.grayColor()])
-        curString.addAttribute(NSForegroundColorAttributeName, value: UIColor.blackColor(), range: NSRange(location:0,length:4))
+        cell.currency = currency
         
-        cell!.textLabel?.attributedText = curString
-        cell!.detailTextLabel?.text = "\(currency.countryName!)"
-        cell!.detailTextLabel?.textColor = UIColor.lightGrayColor()
-        
-        return cell!
+        return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let currency:Currency
         
-        if searchController.active && searchController.searchBar.text != "" {
-            currency = self.filteredCurrencies[indexPath.row]
-            searchController.active = false
+        if searchController.isActive && searchController.searchBar.text != "" {
+            currency = self.filteredCurrencies[(indexPath as NSIndexPath).row]
+            searchController.isActive = false
         } else {
-            currency = self.currencies[indexPath.row]
+            currency = self.currencies[(indexPath as NSIndexPath).row]
         }
         
         self.dismissSearchBar()
-        NSNotificationCenter.defaultCenter().postNotificationName("selectedCurrency", object: currency)
-        self.dismissViewControllerAnimated(true) {}
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "selectedCurrency"), object: currency)
+        self.dismiss(animated: true) {}
     }
   
 }

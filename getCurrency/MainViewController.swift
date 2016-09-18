@@ -27,7 +27,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainViewController.selectedCurrency(_:)), name: "selectedCurrency", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MainViewController.selectedCurrency(_:)), name: NSNotification.Name(rawValue: "selectedCurrency"), object: nil)
          
         self.view.addSubview(self.getCurrencyButton)
         self.view.addConstraints(getCurrencyButton.constrainToTopOfSuperView(200))
@@ -43,16 +43,16 @@ class MainViewController: UIViewController {
         self.view.addConstraints(textView.constrainHeight(200))
      }
     
-    func selectedCurrency(notification:NSNotification){
+    func selectedCurrency(_ notification:Notification){
         self.textView.text = ""
         let currency = notification.object as! Currency
-        print("\(currency.print())")
-        self.textView.text = "\(currency.print())"
+        print("\(currency)")
+        self.textView.text = "\(currency)"
     }
     
-    func btnTapped(sender:UIButton){
+    func btnTapped(_ sender:UIButton){
         let navCtrl = UINavigationController(rootViewController: self.currencyCtrl)
-        self.navigationController!.presentViewController(navCtrl, animated: true) {}
+        self.navigationController!.present(navCtrl, animated: true) {}
     }
 
 
