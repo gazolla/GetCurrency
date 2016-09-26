@@ -14,10 +14,10 @@ class MainViewController: UIViewController {
         return UIButton.makeButton("get currency", tag: 222, hasBackground: true, target: self,  action: #selector(MainViewController.btnTapped(_:)))
     }()
     
-    lazy var textView:UITextView = {
-        let textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        return textView
+    lazy var currencyCell:CurrencyCell = {
+        let currencyCell = CurrencyCell()
+        currencyCell.translatesAutoresizingMaskIntoConstraints = false
+        return currencyCell
     }()
     
     lazy var currencyCtrl:CurrencyController = {
@@ -36,18 +36,16 @@ class MainViewController: UIViewController {
         self.view.addConstraints(getCurrencyButton.constrainHeight(50))
         
         
-        self.view.addSubview(textView)
-        self.view.addConstraints(textView.constrainToBottomOfSuperView(100))
-        self.view.addConstraints(textView.centerHorizontallyTo(self.view))
-        self.view.addConstraints(textView.constrainWidth(self.view.bounds.width-20))
-        self.view.addConstraints(textView.constrainHeight(200))
+        self.view.addSubview(currencyCell)
+        self.view.addConstraints(currencyCell.constrainToBottomOfSuperView(100))
+        self.view.addConstraints(currencyCell.centerHorizontallyTo(self.view))
+        self.view.addConstraints(currencyCell.constrainWidth(self.view.bounds.width-20))
+        self.view.addConstraints(currencyCell.constrainHeight(200))
      }
     
     func selectedCurrency(_ notification:Notification){
-        self.textView.text = ""
         let currency = notification.object as! Currency
-        print("\(currency)")
-        self.textView.text = "\(currency)"
+        self.currencyCell.currency = currency
     }
     
     func btnTapped(_ sender:UIButton){
