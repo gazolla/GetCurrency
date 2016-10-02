@@ -14,6 +14,18 @@ class MainViewController: UIViewController {
         return UIButton.makeButton("get currency", tag: 222, hasBackground: true, target: self,  action: #selector(MainViewController.btnTapped(_:)))
     }()
     
+    lazy var selectedCurrencyTableView:UITableView = {
+        let tv = UITableView()
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        tv.dataSource = self
+        tv.delegate = self
+        tv.keyboardDismissMode = .onDrag
+        tv.register(CurrencyCell.self, forCellReuseIdentifier: "cell")
+        return tv
+    }()
+
+    
     lazy var currencyCell:CurrencyCell = {
         let currencyCell = CurrencyCell()
         currencyCell.translatesAutoresizingMaskIntoConstraints = false
@@ -23,6 +35,13 @@ class MainViewController: UIViewController {
     lazy var currencyCtrl:CurrencyController = {
         return CurrencyController()
     }()
+    
+    var currencies:[Currency] = [] {
+        didSet {
+            self.selectedCurrencyTableView.reloadData()
+        }
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,16 +55,15 @@ class MainViewController: UIViewController {
         self.view.addConstraints(getCurrencyButton.constrainHeight(50))
         
         
-        self.view.addSubview(currencyCell)
-        self.view.addConstraints(currencyCell.constrainToBottomOfSuperView(100))
-        self.view.addConstraints(currencyCell.centerHorizontallyTo(self.view))
-        self.view.addConstraints(currencyCell.constrainWidth(self.view.bounds.width-20))
-        self.view.addConstraints(currencyCell.constrainHeight(200))
+        self.view.addSubview(selectedCurrencyTableView)
+        self.view.addConstraints(selectedCurrencyTableView.constrainToBottomOfSuperView(100))
+        self.view.addConstraints(selectedCurrencyTableView.centerHorizontallyTo(self.view))
+        self.view.addConstraints(selectedCurrencyTableView.constrainWidth(self.view.bounds.width-20))
+        self.view.addConstraints(selectedCurrencyTableView.constrainHeight(200))
      }
     
     func selectedCurrency(_ notification:Notification){
-        let currency = notification.object as! Currency
-        self.currencyCell.currency = currency
+        self.currencies = notification.object as! [Currency]
     }
     
     func btnTapped(_ sender:UIButton){
@@ -59,3 +77,22 @@ class MainViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 }
+
+
+//PRAGMA MARK: - TableView Methods
+extension MainViewController:UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.currencies.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! CurrencyCell
+        let currency:Currency = self.currencies[(indexPath as NSIndexPath).row]
+    
+        cell.currency = currency
+        
+        return cell
+    }
+    
+}
+

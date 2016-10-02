@@ -43,16 +43,23 @@ class CurrencyController: UIViewController{
     
     var currencies:[Currency] = Currency().loadEveryCountryWithCurrency()
     var filteredCurrencies:[Currency] = []
+    var selectedCurrencies:[String:Currency] = [:]
     
 
     // PRAGMA MARK: - UIViewController Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Select one currency:"
         self.navigationItem.leftBarButtonItem = self.leftButton
-        self.navigationItem.rightBarButtonItem = self.searchButton
         self.view.addSubview(self.tableView)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.searchController.searchBar.alpha = 0
+        self.navigationItem.rightBarButtonItem = self.searchButton
+        self.title = "Select one currency:"
+    }
+    
  }
 
 
@@ -70,6 +77,7 @@ extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!)
     }
+    
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
          self.dismissSearchBar()
@@ -101,8 +109,13 @@ extension CurrencyController:UISearchBarDelegate, UISearchResultsUpdating {
         })
     }
     
-    func dismissTapped(_ sender:UIButton){
-        self.dismiss(animated: true) {}
+    func dismissTapped(_ sender:UIBarButtonItem){
+        self.searchController.isActive = false
+
+        self.dismiss(animated: true) {
+            let currencies:[Currency] =  self.selectedCurrencies.map{ $0.1 }
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "selectedCurrency"), object:currencies)
+        }
     }
 }
 
@@ -125,6 +138,13 @@ extension CurrencyController:UITableViewDelegate, UITableViewDataSource {
             currency = self.currencies[(indexPath as NSIndexPath).row]
         }
         
+        if selectedCurrencies.count > 0 {
+            let selected = selectedCurrencies[currency.currencyCode!]
+            if selected != nil {
+                cell.accessoryType = .checkmark
+            }
+        }
+        
         cell.currency = currency
         
         return cell
@@ -135,14 +155,23 @@ extension CurrencyController:UITableViewDelegate, UITableViewDataSource {
         
         if searchController.isActive && searchController.searchBar.text != "" {
             currency = self.filteredCurrencies[(indexPath as NSIndexPath).row]
-            searchController.isActive = false
         } else {
             currency = self.currencies[(indexPath as NSIndexPath).row]
         }
         
-        self.dismissSearchBar()
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "selectedCurrency"), object: currency)
-        self.dismiss(animated: true) {}
+        selectCurrency(tableView, indexPath, currency)
+    }
+    
+    func selectCurrency(_ tableView: UITableView, _ indexPath: IndexPath, _ currency: Currency){
+        if let cell = tableView.cellForRow(at: indexPath){
+            if cell.accessoryType == .none {
+                cell.accessoryType = .checkmark
+                selectedCurrencies[currency.currencyCode!] = currency
+            } else {
+                cell.accessoryType = .none
+                selectedCurrencies.removeValue(forKey: currency.currencyCode!)
+            }
+        }
     }
   
 }

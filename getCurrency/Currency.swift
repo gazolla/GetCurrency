@@ -14,6 +14,7 @@ class Currency {
     var countryCode:String?
     var currencyCode:String?
     var currencyName:String?
+    var currencySymbol:String?
     
     func loadEveryCountryWithCurrency() -> [Currency] {
         var result:[Currency]=[]
@@ -26,9 +27,12 @@ class Currency {
             let currencyLocale = Locale(identifier: currencyCode)
             currency.currencyName = (currencyLocale as NSLocale).displayName(forKey:NSLocale.Key.currencyCode, value: currencyCode)
             currency.countryCode = String(currencyCode.characters.prefix(2))
+            currency.currencySymbol = (currencyLocale as NSLocale).displayName(forKey:NSLocale.Key.currencySymbol, value: currencyCode)
+
             
             let countryLocale  = NSLocale.current
             currency.countryName = (countryLocale as NSLocale).displayName(forKey: NSLocale.Key.countryCode, value: currency.countryCode!)
+            
             
             if currency.countryName != nil {
                 result.append(currency)
@@ -41,6 +45,6 @@ class Currency {
 
 extension Currency:CustomStringConvertible {
     var description: String {
-        return "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\ncurrencyName: \(self.currencyName!)\n----------------------------"
+        return "\nCountryCode   : \(self.countryCode!)\nName         : \(self.countryName!)\nCurrencyCode : \(self.currencyCode!)\ncurrencyName: \(self.currencyName!)\ncurrencySymbol: \(self.currencySymbol!)\n----------------------------"
     }
 }
